@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SarkariNaukri Filter — Apni Job Khud Dhundho</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron:#FF6B00; --saffron-light:#FF8C3A;
+    --green:#1a7a4a; --green-light:#22a862;
+    --navy:#0a1628; --navy2:#0f1f3d;
+    --gold:#FFB800; --text:#1a1a2e; --muted:#6b7280;
+    --card-bg:#ffffff; --border:#e5e7eb; --bg:#f0f4f8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Hind',sans-serif;min-height:100vh;}
+  .tricolor-bar{height:5px;background:linear-gradient(to right,var(--saffron) 33.33%,white 33.33%,white 66.66%,var(--green) 66.66%);}
+  .header{background:linear-gradient(135deg,var(--navy),var(--navy2));position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+  .header-inner{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 2rem;position:relative;z-index:1;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+  .logo-area{display:flex;align-items:center;gap:0.8rem;}
+  .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--saffron),var(--gold));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+  .logo-text{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.3rem;color:white;line-height:1;}
+  .logo-sub{font-size:0.7rem;color:rgba(255,255,255,0.5);margin-top:0.1rem;}
+  .live-badge{display:flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:0.35rem 0.8rem;border-radius:20px;font-size:0.72rem;color:rgba(255,255,255,0.7);}
+  .live-dot{width:6px;height:6px;background:#4ade80;border-radius:50%;animation:blink 1.5s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+  .hero-text{text-align:center;}
+  .hero-text h1{font-family:'Baloo 2',cursive;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;color:white;line-height:1.2;margin-bottom:0.5rem;}
+  .hero-text h1 span{color:var(--gold);}
+  .hero-text p{color:rgba(255,255,255,0.55);font-size:0.9rem;}
+  .ad-banner{background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.1);border-radius:8px;padding:0.7rem;text-align:center;font-size:0.7rem;color:rgba(255,255,255,0.2);text-transform:uppercase;letter-spacing:0.08em;margin-top:1.2rem;}
+  .stats-strip{background:var(--navy);padding:0.8rem 1.5rem;}
+  .stats-inner{max-width:1100px;margin:0 auto;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;}
+  .stat-item{text-align:center;color:white;}
+  .stat-num{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--gold);}
+  .stat-label{font-size:0.65rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;}
+  .main{max-width:1100px;margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:300px 1fr;gap:1.5rem;align-items:start;}
+  .filter-card{background:var(--card-bg);border-radius:16px;border:1px solid var(--border);overflow:hidden;position:sticky;top:1rem;box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+  .filter-header{background:linear-gradient(135deg,var(--saffron),var(--saffron-light));padding:1rem 1.2rem;display:flex;align-items:center;gap:0.5rem;}
+  .filter-header h2{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;color:white;}
+  .filter-body{padding:1.2rem;}
+  .field-group{margin-bottom:1rem;}
+  .field-label{display:block;font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;}
+  select,input[type="number"]{width:100%;padding:0.6rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Hind',sans-serif;font-size:0.88rem;color:var(--text);background:#fafafa;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+  select:focus,input[type="number"]:focus{border-color:var(--saffron);background:white;}
+  .filter-btn{width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--saffron),var(--saffron-light));border:none;border-radius:10px;color:white;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 4px 15px rgba(255,107,0,0.3);margin-top:0.5rem;}
+  .filter-btn:hover{transform:translateY(-1px);}
+  .reset-btn{width:100%;padding:0.5rem;background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Hind',sans-serif;font-size:0.82rem;cursor:pointer;margin-top:0.5rem;transition:all 0.15s;}
+  .reset-btn:hover{border-color:var(--saffron);color:var(--saffron);}
+  .side-ad{background:white;border:1px dashed var(--border);border-radius:10px;padding:0.8rem;text-align:center;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:1rem;}
+  .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+  .results-count{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;}
+  .results-count span{color:var(--saffron);}
+  .sort-select{padding:0.4rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.78rem;font-family:'Hind',sans-serif;color:var(--muted);background:white;outline:none;cursor:pointer;width:auto;}
+  .job-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:1.2rem;margin-bottom:1rem;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s;box-shadow:0 2px 10px rgba(0,0,0,0.04);animation:fadeIn 0.3s ease forwards;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .job-card:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.08);border-color:rgba(255,107,0,0.3);}
+  .job-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:0.8rem;}
+  .job-dept{display:flex;align-items:center;gap:0.5rem;}
+  .dept-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .job-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;color:var(--text);line-height:1.2;}
+  .job-org{font-size:0.78rem;color:var(--muted);margin-top:0.1rem;}
+  .deadline-badge{flex-shrink:0;text-align:right;}
+  .deadline-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+  .deadline-date{font-family:'Baloo 2',cursive;font-size:0.85rem;font-weight:700;}
+  .deadline-urgent{color:#dc2626;} .deadline-soon{color:#d97706;} .deadline-ok{color:var(--green);}
+  .job-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.8rem;}
+  .tag{font-size:0.7rem;font-weight:500;padding:0.2rem 0.6rem;border-radius:6px;}
+  .tag-qual{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+  .tag-state{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+  .tag-type{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+  .tag-age{background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff;}
+  .job-card-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:0.8rem;border-top:1px solid var(--border);}
+  .vacancy-info{font-size:0.8rem;color:var(--muted);}
+  .vacancy-info strong{color:var(--text);font-weight:600;}
+  .apply-btn{padding:0.5rem 1.2rem;background:linear-gradient(135deg,var(--green),var(--green-light));border:none;border-radius:8px;color:white;font-family:'Baloo 2',cursive;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;transition:transform 0.15s;box-shadow:0 3px 10px rgba(26,122,74,0.3);}
+  .apply-btn:hover{transform:translateY(-1px);}
+  .empty-state,.initial-state{text-align:center;padding:3rem 1rem;background:white;border-radius:14px;}
+  .empty-state{border:1.5px dashed var(--border);}
+  .initial-state{border:1.5px solid var(--border);}
+  .empty-state .icon,.initial-state .icon{font-size:3rem;margin-bottom:1rem;opacity:0.4;}
+  .empty-state h3,.initial-state h3{font-family:'Baloo 2',cursive;font-size:1.1rem;margin-bottom:0.5rem;}
+  .empty-state p,.initial-state p{font-size:0.85rem;color:var(--muted);line-height:1.6;}
+  /* Loading skeleton */
+  .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;height:16px;margin-bottom:0.5rem;}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @media(max-width:768px){.main{grid-template-columns:1fr;}.filter-card{position:static;}.header-top{flex-direction:column;gap:0.8rem;text-align:center;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="tricolor-bar"></div>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo-area">
+        <div class="logo-icon">🏛️</div>
+        <div>
+          <div class="logo-text">SarkariNaukri Filter</div>
+          <div class="logo-sub">Apni Naukri, Apni Choice</div>
+        </div>
+      </div>
+      <div class="live-badge"><div class="live-dot"></div>Live Jobs</div>
+    </div>
+    <div class="hero-text">
+      <h1>Apni Qualification Daalo,<br><span>Matching Jobs Pao</span></h1>
+      <p>SSC • UPSC • Railway • State PSC • Bank • Police — Sab ek jagah</p>
+    </div>
+    <div class="ad-banner">Advertisement — Google AdSense Yahan Lagega</div>
+  </div>
+</div>
+
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item"><div class="stat-num" id="statTotal">...</div><div class="stat-label">Active Jobs</div></div>
+    <div class="stat-item"><div class="stat-num">28</div><div class="stat-label">States Covered</div></div>
+    <div class="stat-item"><div class="stat-num">Daily</div><div class="stat-label">Updated</div></div>
+    <div class="stat-item"><div class="stat-num">Free</div><div class="stat-label">Hamesha</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div>
+    <div class="filter-card">
+      <div class="filter-header"><span>🔍</span><h2>Apni Details Bharo</h2></div>
+      <div class="filter-body">
+        <div class="field-group">
+          <label class="field-label">Qualification</label>
+          <select id="qual">
+            <option value="">-- Chuniye --</option>
+            <option value="10th">10th Pass</option>
+            <option value="12th">12th Pass</option>
+            <option value="iti">ITI</option>
+            <option value="diploma">Diploma</option>
+            <option value="graduate">Graduate (Any Stream)</option>
+            <option value="btech">B.Tech / BE</option>
+            <option value="bsc">B.Sc</option>
+            <option value="ba">BA</option>
+            <option value="bcom">B.Com</option>
+            <option value="postgraduate">Post Graduate</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Aapki Umar (Age)</label>
+          <input type="number" id="age" placeholder="Jaise: 22" min="16" max="60">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Aapka State</label>
+          <select id="state">
+            <option value="">-- Koi Bhi State --</option>
+            <option value="central">Central Govt (All India)</option>
+            <option value="up">Uttar Pradesh</option>
+            <option value="bihar">Bihar</option>
+            <option value="mp">Madhya Pradesh</option>
+            <option value="rajasthan">Rajasthan</option>
+            <option value="maharashtra">Maharashtra</option>
+            <option value="delhi">Delhi</option>
+            <option value="haryana">Haryana</option>
+            <option value="gujarat">Gujarat</option>
+            <option value="wb">West Bengal</option>
+            <option value="punjab">Punjab</option>
+            <option value="jharkhand">Jharkhand</option>
+            <option value="chhattisgarh">Chhattisgarh</option>
+            <option value="uttarakhand">Uttarakhand</option>
+            <option value="odisha">Odisha</option>
+            <option value="hp">Himachal Pradesh</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Job Category</label>
+          <select id="category">
+            <option value="">-- Sabhi Categories --</option>
+            <option value="railway">Railway</option>
+            <option value="ssc">SSC</option>
+            <option value="upsc">UPSC</option>
+            <option value="bank">Bank</option>
+            <option value="police">Police</option>
+            <option value="teaching">Teaching</option>
+            <option value="psc">State PSC</option>
+            <option value="defence">Defence / Army</option>
+            <option value="health">Health / Medical</option>
+          </select>
+        </div>
+        <button class="filter-btn" onclick="filterJobs()">🔍 Jobs Dhundho</button>
+        <button class="reset-btn" onclick="resetFilter()">↩ Reset Karo</button>
+      </div>
+    </div>
+    <div class="side-ad">Advertisement</div>
+  </div>
+
+  <div>
+    <div class="results-header" id="resultsHeader" style="display:none;">
+      <div class="results-count"><span id="matchCount">0</span> Jobs Mili Tumhare Liye</div>
+      <select class="sort-select" onchange="sortJobs(this.value)">
+        <option value="deadline">Deadline ke hisaab se</option>
+        <option value="vacancy">Vacancy ke hisaab se</option>
+        <option value="newest">Nayi pehle</option>
+      </select>
+    </div>
+    <div id="jobsContainer">
+      <div class="initial-state">
+        <div class="icon">🏛️</div>
+        <h3>Apni Details Bharo, Jobs Pao!</h3>
+        <p>Baayi taraf apni qualification,<br>umar aur state select karo —<br>sirf tumhare liye matching<br>sarkari jobs dikhenge.</p>
+      </div>
+    </div>
+    <div style="margin-top:1rem;background:white;border:1px dashed #e5e7eb;border-radius:10px;padding:1rem;text-align:center;font-size:0.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;">Advertisement — Google AdSense</div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi1EKXiecu4jTWiLXjXjIknMWPp8BWM8Y",
+    authDomain: "sarkarinaukri-77d7b.firebaseapp.com",
+    projectId: "sarkarinaukri-77d7b",
+    storageBucket: "sarkarinaukri-77d7b.firebasestorage.app",
+    messagingSenderId: "403236777665",
+    appId: "1:403236777665:web:9b3eb9eef73d57a4706e40"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const qualHierarchy = {
+    '10th':['10th'],
+    '12th':['10th','12th'],
+    'iti':['10th','iti'],
+    'diploma':['10th','12th','diploma'],
+    'graduate':['10th','12th','diploma','graduate','ba','bcom','bsc','btech'],
+    'btech':['10th','12th','diploma','btech'],
+    'bsc':['10th','12th','bsc'],
+    'ba':['10th','12th','ba'],
+    'bcom':['10th','12th','bcom'],
+    'postgraduate':['10th','12th','diploma','graduate','ba','bcom','bsc','btech','postgraduate']
+  };
+
+  let allJobs = [];
+  let currentJobs = [];
+
+  // Load all jobs from Firebase on page load
+  async function loadJobs() {
+    try {
+      const q = query(collection(db, 'jobs'), orderBy('postedDate', 'desc'));
+      const snap = await getDocs(q);
+      allJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const today = new Date();
+      const activeJobs = allJobs.filter(j => new Date(j.deadline) >= today);
+      document.getElementById('statTotal').textContent = activeJobs.length;
+    } catch(e) {
+      document.getElementById('statTotal').textContent = '0';
+      console.error(e);
+    }
+  }
+
+  loadJobs();
+
+  function getDeadlineStatus(dateStr) {
+    const today = new Date();
+    const deadline = new Date(dateStr);
+    const diff = Math.ceil((deadline - today) / (1000*60*60*24));
+    if (diff <= 0) return {class:'deadline-urgent', label:'❌ Expired'};
+    if (diff <= 7) return {class:'deadline-urgent', label:`⚠️ ${diff} din baaki!`};
+    if (diff <= 20) return {class:'deadline-soon', label:`${diff} din baaki`};
+    return {class:'deadline-ok', label:new Date(dateStr).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})};
+  }
+
+  window.filterJobs = () => {
+    const qual = document.getElementById('qual').value;
+    const age = parseInt(document.getElementById('age').value);
+    const state = document.getElementById('state').value;
+    const category = document.getElementById('category').value;
+
+    if (!qual && !age && !state && !category) { alert('Kam se kam ek filter zaroor chuniye! 😊'); return; }
+
+    const today = new Date();
+    let filtered = allJobs.filter(job => {
+      if (new Date(job.deadline) < today) return false;
+      if (qual) {
+        const userQuals = qualHierarchy[qual] || [qual];
+        if (!job.qualifications.some(q => userQuals.includes(q))) return false;
+      }
+      if (age && (age < job.minAge || age > job.maxAge)) return false;
+      if (state) {
+        if (state === 'central' && !job.states.includes('central')) return false;
+        if (state !== 'central' && !job.states.includes(state) && !job.states.includes('central')) return false;
+      }
+      if (category && job.category !== category) return false;
+      return true;
+    });
+
+    currentJobs = filtered;
+    renderJobs(filtered);
+  };
+
+  function renderJobs(jobs) {
+    const container = document.getElementById('jobsContainer');
+    const header = document.getElementById('resultsHeader');
+    document.getElementById('matchCount').textContent = jobs.length;
+    header.style.display = 'flex';
+
+    if (jobs.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="icon">😔</div><h3>Koi Job Nahi Mili</h3><p>Filters thoda change karo ya age limit check karo.</p></div>`;
+      return;
+    }
+
+    container.innerHTML = jobs.map((job,i) => {
+      const dl = getDeadlineStatus(job.deadline);
+      return `
+        <div class="job-card" style="animation-delay:${i*0.05}s">
+          <div class="job-card-top">
+            <div class="job-dept">
+              <div class="dept-icon" style="background:${job.iconBg||'#f5f5f5'}">${job.icon||'📄'}</div>
+              <div>
+                <div class="job-title">${job.title}</div>
+                <div class="job-org">${job.org}</div>
+              </div>
+            </div>
+            <div class="deadline-badge">
+              <div class="deadline-label">Last Date</div>
+              <div class="deadline-date ${dl.class}">${dl.label}</div>
+            </div>
+          </div>
+          <div class="job-tags">
+            ${job.qualifications.map(q=>`<span class="tag tag-qual">📚 ${q.toUpperCase()}</span>`).join('')}
+            ${job.states.map(s=>`<span class="tag tag-state">📍 ${s==='central'?'All India':s.toUpperCase()}</span>`).join('')}
+            <span class="tag tag-type">📂 ${job.category.toUpperCase()}</span>
+            <span class="tag tag-age">🎂 ${job.minAge}–${job.maxAge} Sal</span>
+          </div>
+          <div class="job-card-bottom">
+            <div class="vacancy-info">Vacancy: <strong>${Number(job.vacancy).toLocaleString('en-IN')}</strong> Posts</div>
+            <a href="${job.applyLink}" target="_blank" class="apply-btn">Apply Karo →</a>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  window.sortJobs = (by) => {
+    let sorted = [...currentJobs];
+    if (by==='deadline') sorted.sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+    else if (by==='vacancy') sorted.sort((a,b)=>b.vacancy-a.vacancy);
+    else if (by==='newest') sorted.sort((a,b)=>new Date(b.postedDate)-new Date(a.postedDate));
+    renderJobs(sorted);
+  };
+
+  window.resetFilter = () => {
+    document.getElementById('qual').value='';
+    document.getElementById('age').value='';
+    document.getElementById('state').value='';
+    document.getElementById('category').value='';
+    document.getElementById('resultsHeader').style.display='none';
+    document.getElementById('jobsContainer').innerHTML=`<div class="initial-state"><div class="icon">🏛️</div><h3>Apni Details Bharo, Jobs Pao!</h3><p>Baayi taraf apni qualification,<br>umar aur state select karo —<br>sirf tumhare liye matching<br>sarkari jobs dikhenge.</p></div>`;
+    currentJobs=[];
+  };
+</script>
+</body>
+</html>
