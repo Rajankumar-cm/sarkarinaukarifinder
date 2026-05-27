@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovtJobsFilter — Find Your Perfect Government Job</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1e429f;
+    --primary-light: #ebf5ff;
+    --success: #057a55;
+    --success-light: #f3faf7;
+    --danger: #e02424;
+    --warning: #c27803;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:14px; line-height:1.5; min-height:100vh; }
+
+  /* HEADER */
+  .header { background:linear-gradient(135deg, #1e3a5f 0%, #1a56db 100%); }
+  .header-inner { max-width:1200px; margin:0 auto; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:0.6rem; }
+  .logo-icon { width:36px; height:36px; background:rgba(255,255,255,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+  .logo-name { font-size:1rem; font-weight:700; color:white; letter-spacing:-0.02em; }
+  .logo-tag { font-size:0.65rem; color:rgba(255,255,255,0.55); font-weight:400; }
+  .header-right { display:flex; align-items:center; gap:0.8rem; }
+  .live-pill { display:flex; align-items:center; gap:0.35rem; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); padding:0.3rem 0.7rem; border-radius:20px; font-size:0.7rem; color:rgba(255,255,255,0.8); font-weight:500; }
+  .live-dot { width:5px; height:5px; background:#34d399; border-radius:50%; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* HERO */
+  .hero { background:linear-gradient(135deg, #1e3a5f 0%, #1a56db 100%); padding:2.5rem 1.5rem 3rem; text-align:center; }
+  .hero-inner { max-width:680px; margin:0 auto; }
+  .hero h1 { font-size:clamp(1.6rem,4vw,2.4rem); font-weight:800; color:white; line-height:1.15; letter-spacing:-0.03em; margin-bottom:0.75rem; }
+  .hero h1 em { font-style:normal; color:#93c5fd; }
+  .hero p { color:rgba(255,255,255,0.65); font-size:0.9rem; font-weight:400; margin-bottom:1.5rem; }
+  .hero-badges { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-bottom:1.5rem; }
+  .hero-badge { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); padding:0.3rem 0.75rem; border-radius:20px; font-size:0.72rem; color:rgba(255,255,255,0.8); font-weight:500; }
+  .ad-slot { background:rgba(255,255,255,0.06); border:1px dashed rgba(255,255,255,0.15); border-radius:8px; padding:0.6rem; font-size:0.65rem; color:rgba(255,255,255,0.25); text-transform:uppercase; letter-spacing:0.1em; }
+
+  /* STATS BAR */
+  .stats-bar { background:#1e3a5f; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .stats-inner { max-width:1200px; margin:0 auto; padding:0.75rem 1.5rem; display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat-val { font-size:1rem; font-weight:700; color:#93c5fd; font-variant-numeric:tabular-nums; }
+  .stat-lbl { font-size:0.62rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.08em; margin-top:1px; }
+
+  /* MAIN LAYOUT */
+  .main { max-width:1200px; margin:0 auto; padding:1.5rem; display:grid; grid-template-columns:280px 1fr; gap:1.25rem; align-items:start; }
+
+  /* FILTER PANEL */
+  .filter-panel { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; position:sticky; top:1rem; box-shadow:var(--shadow); }
+  .filter-head { background:var(--primary); padding:0.9rem 1.1rem; }
+  .filter-head h2 { font-size:0.82rem; font-weight:600; color:white; letter-spacing:0.02em; text-transform:uppercase; }
+  .filter-body { padding:1.1rem; }
+  .field { margin-bottom:0.9rem; }
+  .field:last-of-type { margin-bottom:1rem; }
+  .field label { display:block; font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.35rem; }
+  .field select, .field input { width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border); border-radius:7px; font-family:'Inter',sans-serif; font-size:0.82rem; color:var(--text); background:#fafafa; outline:none; transition:border-color 0.15s, box-shadow 0.15s; -webkit-appearance:none; }
+  .field select:focus, .field input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(26,86,219,0.1); background:white; }
+  .search-btn { width:100%; padding:0.65rem; background:var(--primary); border:none; border-radius:8px; color:white; font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:600; cursor:pointer; transition:background 0.15s; display:flex; align-items:center; justify-content:center; gap:0.4rem; }
+  .search-btn:hover { background:var(--primary-dark); }
+  .reset-btn { width:100%; padding:0.5rem; background:none; border:1px solid var(--border); border-radius:7px; color:var(--text-secondary); font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; cursor:pointer; margin-top:0.5rem; transition:all 0.15s; }
+  .reset-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .filter-footer { padding:0.9rem 1.1rem; border-top:1px solid var(--border); }
+  .ad-side { background:#f8fafc; border:1px dashed var(--border); border-radius:8px; padding:0.7rem; text-align:center; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; }
+
+  /* RESULTS */
+  .results-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .results-info { font-size:0.82rem; font-weight:600; color:var(--text); }
+  .results-info span { color:var(--primary); }
+  .sort-select { padding:0.4rem 0.65rem; border:1px solid var(--border); border-radius:7px; font-size:0.75rem; font-family:'Inter',sans-serif; color:var(--text-secondary); background:white; outline:none; cursor:pointer; }
+
+  /* JOB CARD */
+  .job-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.1rem; margin-bottom:0.75rem; transition:box-shadow 0.15s, border-color 0.15s; box-shadow:var(--shadow); animation:slideIn 0.25s ease forwards; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .job-card:hover { box-shadow:var(--shadow-md); border-color:#bfdbfe; }
+  .job-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:0.75rem; }
+  .job-left { display:flex; align-items:flex-start; gap:0.75rem; }
+  .job-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+  .job-title { font-size:0.9rem; font-weight:700; color:var(--text); line-height:1.3; }
+  .job-org { font-size:0.75rem; color:var(--text-secondary); margin-top:0.15rem; font-weight:400; }
+  .deadline-box { flex-shrink:0; text-align:right; }
+  .deadline-label { font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; }
+  .deadline-val { font-size:0.78rem; font-weight:700; margin-top:0.1rem; }
+  .dl-urgent { color:var(--danger); }
+  .dl-soon { color:var(--warning); }
+  .dl-ok { color:var(--success); }
+  .job-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.75rem; }
+  .tag { font-size:0.67rem; font-weight:500; padding:0.2rem 0.55rem; border-radius:5px; }
+  .tag-qual { background:#eff6ff; color:#1d4ed8; }
+  .tag-state { background:#f0fdf4; color:#166534; }
+  .tag-cat { background:#fef3c7; color:#92400e; }
+  .tag-age { background:#f5f3ff; color:#5b21b6; }
+  .job-bottom { display:flex; align-items:center; justify-content:space-between; padding-top:0.75rem; border-top:1px solid var(--border); }
+  .vacancy { font-size:0.78rem; color:var(--text-secondary); }
+  .vacancy strong { color:var(--text); font-weight:600; }
+  .apply-btn { padding:0.45rem 1.1rem; background:var(--success); border:none; border-radius:7px; color:white; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem; transition:background 0.15s; }
+  .apply-btn:hover { background:#046c4e; }
+
+  /* STATES */
+  .state-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:2.5rem 1.5rem; text-align:center; box-shadow:var(--shadow); }
+  .state-icon { font-size:2.5rem; margin-bottom:0.75rem; display:block; opacity:0.35; }
+  .state-title { font-size:0.95rem; font-weight:700; color:var(--text); margin-bottom:0.4rem; }
+  .state-desc { font-size:0.8rem; color:var(--text-muted); line-height:1.6; }
+  .ad-bottom { background:var(--card); border:1px dashed var(--border); border-radius:8px; padding:0.9rem; text-align:center; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-top:0.75rem; }
+
+  @media(max-width:768px) {
+    .main { grid-template-columns:1fr; }
+    .filter-panel { position:static; }
+    .header-inner { flex-direction:column; gap:0.6rem; text-align:center; }
+    .hero { padding:2rem 1rem 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🏛️</div>
+      <div>
+        <div class="logo-name">GovtJobsFilter</div>
+        <div class="logo-tag">Smart Government Job Search</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-pill"><div class="live-dot"></div>Live Updates</div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Find Government Jobs<br>Matched to <em>Your Profile</em></h1>
+    <p>Enter your qualification and age — we'll show only the jobs you're eligible for, right now.</p>
+    <div class="hero-badges">
+      <span class="hero-badge">SSC</span>
+      <span class="hero-badge">UPSC</span>
+      <span class="hero-badge">Railway</span>
+      <span class="hero-badge">Banking</span>
+      <span class="hero-badge">State PSC</span>
+      <span class="hero-badge">Police</span>
+      <span class="hero-badge">Defence</span>
+    </div>
+    <div class="ad-slot">Advertisement — Google AdSense</div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-val" id="statTotal">—</div><div class="stat-lbl">Active Jobs</div></div>
+    <div class="stat"><div class="stat-val">28</div><div class="stat-lbl">States Covered</div></div>
+    <div class="stat"><div class="stat-val">Daily</div><div class="stat-lbl">Updated</div></div>
+    <div class="stat"><div class="stat-val">100%</div><div class="stat-lbl">Free</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FILTER PANEL -->
+  <div>
+    <div class="filter-panel">
+      <div class="filter-head"><h2>🔍 Filter Jobs</h2></div>
+      <div class="filter-body">
+        <div class="field">
+          <label>Qualification</label>
+          <select id="qual">
+            <option value="">All Qualifications</option>
+            <option value="10th">10th Pass</option>
+            <option value="12th">12th Pass</option>
+            <option value="iti">ITI</option>
+            <option value="diploma">Diploma</option>
+            <option value="graduate">Graduate (Any Stream)</option>
+            <option value="btech">B.Tech / B.E.</option>
+            <option value="bsc">B.Sc</option>
+            <option value="ba">B.A.</option>
+            <option value="bcom">B.Com</option>
+            <option value="postgraduate">Post Graduate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Your Age</label>
+          <input type="number" id="age" placeholder="e.g. 24" min="16" max="60">
+        </div>
+        <div class="field">
+          <label>State</label>
+          <select id="state">
+            <option value="">All States</option>
+            <option value="central">Central Govt (All India)</option>
+            <option value="up">Uttar Pradesh</option>
+            <option value="bihar">Bihar</option>
+            <option value="mp">Madhya Pradesh</option>
+            <option value="rajasthan">Rajasthan</option>
+            <option value="maharashtra">Maharashtra</option>
+            <option value="delhi">Delhi</option>
+            <option value="haryana">Haryana</option>
+            <option value="gujarat">Gujarat</option>
+            <option value="wb">West Bengal</option>
+            <option value="punjab">Punjab</option>
+            <option value="jharkhand">Jharkhand</option>
+            <option value="chhattisgarh">Chhattisgarh</option>
+            <option value="uttarakhand">Uttarakhand</option>
+            <option value="odisha">Odisha</option>
+            <option value="hp">Himachal Pradesh</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Job Category</label>
+          <select id="category">
+            <option value="">All Categories</option>
+            <option value="railway">Railway</option>
+            <option value="ssc">SSC</option>
+            <option value="upsc">UPSC</option>
+            <option value="bank">Banking</option>
+            <option value="police">Police</option>
+            <option value="teaching">Teaching</option>
+            <option value="psc">State PSC</option>
+            <option value="defence">Defence / Army</option>
+            <option value="health">Health / Medical</option>
+          </select>
+        </div>
+        <button class="search-btn" onclick="filterJobs()">Search Matching Jobs →</button>
+        <button class="reset-btn" onclick="resetFilter()">Clear Filters</button>
+      </div>
+      <div class="filter-footer">
+        <div class="ad-side">Advertisement</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div>
+    <div class="results-bar" id="resultsBar" style="display:none;">
+      <div class="results-info"><span id="matchCount">0</span> jobs match your profile</div>
+      <select class="sort-select" onchange="sortJobs(this.value)">
+        <option value="deadline">Sort by Deadline</option>
+        <option value="vacancy">Sort by Vacancy</option>
+        <option value="newest">Newest First</option>
+      </select>
+    </div>
+
+    <div id="jobsContainer">
+      <div class="state-box">
+        <span class="state-icon">🎯</span>
+        <div class="state-title">Find Jobs Matched to Your Profile</div>
+        <div class="state-desc">Use the filters on the left to enter your<br>qualification, age and state — we'll show only<br>the government jobs you are eligible to apply for.</div>
+      </div>
+    </div>
+
+    <div class="ad-bottom">Advertisement — Google AdSense</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAi1EKXiecu4jTWiLXjXjIknMWPp8BWM8Y",
+  authDomain: "sarkarinaukri-77d7b.firebaseapp.com",
+  databaseURL: "https://sarkarinaukri-77d7b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sarkarinaukri-77d7b",
+  storageBucket: "sarkarinaukri-77d7b.firebasestorage.app",
+  messagingSenderId: "403236777665",
+  appId: "1:403236777665:web:9b3eb9eef73d57a4706e40",
+  measurementId: "G-H8337BT29P"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const qualMap = {
+  '10th':['10th'],'12th':['10th','12th'],'iti':['10th','iti'],
+  'diploma':['10th','12th','diploma'],
+  'graduate':['10th','12th','diploma','graduate','ba','bcom','bsc','btech'],
+  'btech':['10th','12th','diploma','btech'],'bsc':['10th','12th','bsc'],
+  'ba':['10th','12th','ba'],'bcom':['10th','12th','bcom'],
+  'postgraduate':['10th','12th','diploma','graduate','ba','bcom','bsc','btech','postgraduate']
+};
+
+let allJobs=[], currentJobs=[];
+
+async function init() {
+  try {
+    const snap = await getDocs(query(collection(db,'jobs'), orderBy('postedDate','desc')));
+    allJobs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const active = allJobs.filter(j=>new Date(j.deadline)>=new Date()).length;
+    document.getElementById('statTotal').textContent = active;
+  } catch(e) {
+    document.getElementById('statTotal').textContent='0';
+  }
+}
+init();
+
+function deadline(dateStr) {
+  const diff = Math.ceil((new Date(dateStr)-new Date())/(86400000));
+  if(diff<=0) return {cls:'dl-urgent',txt:'Expired'};
+  if(diff<=7) return {cls:'dl-urgent',txt:`${diff}d left ⚠️`};
+  if(diff<=20) return {cls:'dl-soon',txt:`${diff} days left`};
+  return {cls:'dl-ok',txt:new Date(dateStr).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})};
+}
+
+window.filterJobs = () => {
+  const qual=document.getElementById('qual').value;
+  const age=parseInt(document.getElementById('age').value);
+  const state=document.getElementById('state').value;
+  const cat=document.getElementById('category').value;
+
+  let filtered = allJobs.filter(j => {
+    if(new Date(j.deadline)<new Date()) return false;
+    if(qual){ const uq=qualMap[qual]||[qual]; if(!j.qualifications?.some(q=>uq.includes(q))) return false; }
+    if(age && (age<j.minAge||age>j.maxAge)) return false;
+    if(state){
+      if(state==='central'&&!j.states?.includes('central')) return false;
+      if(state!=='central'&&!j.states?.includes(state)&&!j.states?.includes('central')) return false;
+    }
+    if(cat && j.category!==cat) return false;
+    return true;
+  });
+
+  currentJobs=filtered;
+  render(filtered);
+};
+
+function render(jobs) {
+  document.getElementById('matchCount').textContent=jobs.length;
+  document.getElementById('resultsBar').style.display='flex';
+
+  if(!jobs.length){
+    document.getElementById('jobsContainer').innerHTML=`<div class="state-box"><span class="state-icon">🔍</span><div class="state-title">No Jobs Found</div><div class="state-desc">Try adjusting your filters or removing the age restriction.</div></div>`;
+    return;
+  }
+
+  document.getElementById('jobsContainer').innerHTML = jobs.map((j,i)=>{
+    const dl=deadline(j.deadline);
+    const catLabel={railway:'Railway',ssc:'SSC',upsc:'UPSC',bank:'Banking',police:'Police',teaching:'Teaching',psc:'State PSC',defence:'Defence',health:'Health'}[j.category]||j.category;
+    return `<div class="job-card" style="animation-delay:${i*0.04}s">
+      <div class="job-top">
+        <div class="job-left">
+          <div class="job-icon" style="background:${j.iconBg||'#f1f5f9'}">${j.icon||'📄'}</div>
+          <div>
+            <div class="job-title">${j.title}</div>
+            <div class="job-org">${j.org}</div>
+          </div>
+        </div>
+        <div class="deadline-box">
+          <div class="deadline-label">Last Date</div>
+          <div class="deadline-val ${dl.cls}">${dl.txt}</div>
+        </div>
+      </div>
+      <div class="job-tags">
+        ${(j.qualifications||[]).map(q=>`<span class="tag tag-qual">${q.toUpperCase()}</span>`).join('')}
+        ${(j.states||[]).map(s=>`<span class="tag tag-state">${s==='central'?'All India':s.toUpperCase()}</span>`).join('')}
+        <span class="tag tag-cat">${catLabel}</span>
+        <span class="tag tag-age">Age ${j.minAge}–${j.maxAge} yrs</span>
+      </div>
+      <div class="job-bottom">
+        <div class="vacancy">Vacancies: <strong>${Number(j.vacancy).toLocaleString('en-IN')} Posts</strong></div>
+        <a href="${j.applyLink}" target="_blank" class="apply-btn">Apply Now →</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.sortJobs = by => {
+  let s=[...currentJobs];
+  if(by==='deadline') s.sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+  else if(by==='vacancy') s.sort((a,b)=>b.vacancy-a.vacancy);
+  else s.sort((a,b)=>new Date(b.postedDate)-new Date(a.postedDate));
+  render(s);
+};
+
+window.resetFilter = () => {
+  ['qual','state','category'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('age').value='';
+  document.getElementById('resultsBar').style.display='none';
+  document.getElementById('jobsContainer').innerHTML=`<div class="state-box"><span class="state-icon">🎯</span><div class="state-title">Find Jobs Matched to Your Profile</div><div class="state-desc">Use the filters on the left to enter your<br>qualification, age and state — we'll show only<br>the government jobs you are eligible to apply for.</div></div>`;
+  currentJobs=[];
+};
+</script>
+</body>
+</html>
